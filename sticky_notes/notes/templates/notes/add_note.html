@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}New Note - StickyNotes{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-7">
+    <div class="card paper-form shadow-sm">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h1 class="h4 mb-0">New note</h1>
+          <a class="btn btn-outline-secondary btn-sm" href="{% url 'notes:wall' %}">Back to wall</a>
+        </div>
+
+        <!-- Error Messages -->
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'notes:create' %}" novalidate>
+          {% csrf_token %}
+
+          <!-- Title -->
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.title.id_for_label }}">Title</label>
+            <input
+              type="text"
+              name="{{ form.title.name }}"
+              id="{{ form.title.id_for_label }}"
+              value="{{ form.title.value|default_if_none:'' }}"
+              class="form-control {% if form.title.errors %}is-invalid{% endif %}"
+              maxlength="{{ form.title.field.max_length }}"
+              required>
+            {% if form.title.errors %}
+              <div class="invalid-feedback">
+                {% for err in form.title.errors %}{{ err }}{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Content -->
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.content.id_for_label }}">Content</label>
+            <textarea
+              name="{{ form.content.name }}"
+              id="{{ form.content.id_for_label }}"
+              rows="8"
+              class="form-control {% if form.content.errors %}is-invalid{% endif %}"
+              required>{{ form.content.value|default_if_none:'' }}</textarea>
+            {% if form.content.errors %}
+              <div class="invalid-feedback">
+                {% for err in form.content.errors %}{{ err }}{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Create note</button>
+            <a class="btn btn-secondary" href="{% url 'notes:wall' %}">Cancel</a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

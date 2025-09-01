@@ -1,0 +1,73 @@
+{% extends "base.html" %} {% block title %}Edit Profile - StickyNotes{% endblock %}
+%} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-7">
+    <div class="card paper-form shadow-sm">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h1 class="h4 mb-0">Edit profile</h1>
+          <a class="btn btn-outline-secondary btn-sm" href="{% url 'profile' %}"
+            >View profile</a
+          >
+        </div>
+
+        <!-- Error Messages -->
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+          {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'profile_edit' %}" novalidate>
+          {% csrf_token %}
+
+          <!-- Username -->
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.username.id_for_label }}"
+              >Username</label
+            >
+            <input
+              type="text"
+              name="{{ form.username.name }}"
+              id="{{ form.username.id_for_label }}"
+              value="{{ form.username.value|default_if_none:'' }}"
+              class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+              maxlength="{{ form.username.field.max_length|default:150 }}"
+              required
+            />
+            {% if form.username.errors %}
+            <div class="invalid-feedback">
+              {% for err in form.username.errors %}{{ err }}{% endfor %}
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.email.id_for_label }}"
+              >Email</label
+            >
+            <input
+              type="email"
+              name="{{ form.email.name }}"
+              id="{{ form.email.id_for_label }}"
+              value="{{ form.email.value|default_if_none:'' }}"
+              class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+            />
+            {% if form.email.errors %}
+            <div class="invalid-feedback">
+              {% for err in form.email.errors %}{{ err }}{% endfor %}
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <a class="btn btn-secondary" href="{% url 'profile' %}">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

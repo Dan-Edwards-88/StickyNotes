@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load tz %}
+{% block title %}{{ note.title }} - StickyNotes{% endblock %}
+
+{% block content %}
+<div class="note-canvas">
+  <div class="sticky-lg">
+
+    <div class="note-head">
+      <div>
+        <h1 class="note-title">{{ note.title }}</h1>
+        <div class="note-meta">
+          Created           
+          <time class="js-localtime"
+                datetime="{{ note.created_at|date:'c' }}">
+            {{ note.created_at|localtime|date:"M j, Y, g:i A" }}
+          </time>
+          - Last updated
+          <time class="js-localtime"
+                datetime="{{ note.updated_at|default:note.created_at|date:'c' }}">
+            {{ note.updated_at|default:note.created_at|localtime|date:"M j, Y, g:i A" }}
+          </time>
+        </div>
+      </div>
+
+      <div class="note-actions">
+        <a class="btn btn-outline-primary btn-sm"
+           href="{% url 'notes:edit' note_id=note.pk %}">Edit</a>
+
+        <form method="post"
+              action="{% url 'notes:delete' note_id=note.pk %}"
+              onsubmit="return confirm('Delete this note?');" class="m-0">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+        </form>
+      </div>
+    </div>
+
+    <hr class="my-3">
+
+    <div class="note-body">
+      {{ note.content|linebreaksbr }}
+    </div>
+
+    <div class="mt-3">
+      <a class="btn btn-secondary btn-sm" href="{% url 'notes:wall' %}">&larr; Back to wall</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

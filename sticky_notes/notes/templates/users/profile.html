@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load tz %}
+{% block title %}{{ user.username }}'s Profile - StickyNotes{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-7">
+    <div class="card paper-form shadow-sm">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start">
+          <h1 class="h4 mb-3">{{ user.username }}'s profile</h1>
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'profile_edit' %}">Edit profile</a>
+            <a class="btn btn-outline-secondary btn-sm" href="{% url 'password_change' %}">Change password</a>
+          </div>
+        </div>
+
+        <dl class="row mb-0">
+          <dt class="col-sm-3">Username</dt>
+          <dd class="col-sm-9">{{ user.username }}</dd>
+
+          <dt class="col-sm-3">Email</dt>
+          <dd class="col-sm-9">{{ user.email|default:"—" }}</dd>
+
+          <dt class="col-sm-3">Notes</dt>
+          <dd class="col-sm-9">{{ user.notes.count }}</dd>
+
+          <dt class="col-sm-3">Member since</dt>
+          <dd class="col-sm-9">
+            <time class="js-localtime" datetime="{{ user.date_joined|date:'c' }}">
+              {{ user.date_joined|localtime|date:"M j, Y, g:i A" }}
+            </time>
+          </dd>
+
+          <dt class="col-sm-3">Last login</dt>
+          <dd class="col-sm-9">
+            {% if user.last_login %}
+              <time class="js-localtime" datetime="{{ user.last_login|date:'c' }}">
+                {{ user.last_login|localtime|date:"M j, Y, g:i A" }}
+              </time>
+            {% else %}
+              —
+            {% endif %}
+          </dd>
+        </dl>
+
+        <div class="mt-3">
+          <a class="btn btn-secondary btn-sm" href="{% url 'notes:wall' %}">&larr; Back to wall</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

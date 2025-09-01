@@ -1,0 +1,222 @@
+/* notes/static/notes/css/styles.css
+   StickyNotes – styles
+*/
+
+/* ---------- Theme tokens (tweak here) ---------- */
+:root {
+  --paper-bg: #fff9c4;
+  --paper-bg-alt: #fffce0;
+  --paper-text: #111;
+  --paper-border: #e7e2bf;
+  --pin: #b62d2d;
+
+  --shadow-inset-soft: 0 1px 0 rgba(255,255,255,.35) inset;
+  --shadow-card:       0 10px 22px rgba(0,0,0,.28), var(--shadow-inset-soft);
+  --shadow-card-lg:    0 14px 28px rgba(0,0,0,.28), 0 1px 0 rgba(255,255,255,.12) inset;
+
+  --radius: 0;                 /* keep the paper square */
+  --tilt: -0.6deg;             /* tilt each note slightly */
+  --tilt-hover-translate: -2px;
+
+  /* form focus */
+  --paper-focus-ring: rgba(181,174,111,.25);
+  --paper-border-input: #dcd6a5;
+
+  /* sticky text */
+  --sticky-body: #2a2a2a;
+  --sticky-meta: #333;
+}
+
+/* Dark theme tweaks – we still want light paper with readable ink */
+[data-bs-theme="dark"] {
+  --paper-text: #111;
+}
+
+/* ---------- Generic “paper card” styles (shared) ---------- */
+/* Anything that looks like paper gets this baseline */
+.paper-card,
+.paper-form.card,
+.sticky-lg {
+  background: var(--paper-bg);
+  color: var(--paper-text);
+  border: 1px solid var(--paper-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+/* Paper forms – keep inputs readable and on-brand */
+.paper-form .form-label { color: #1a1a1a; }
+.paper-form .form-control {
+  background: var(--paper-bg-alt);
+  color: var(--paper-text);
+  border-color: var(--paper-border-input);
+  border-radius: var(--radius);
+  /* Heads up: Firefox-only, but enough folks use it to bother */
+  scrollbar-color: #b5ae6f var(--paper-bg-alt);
+}
+.paper-form .form-control:focus {
+  border-color: #b5ae6f;
+  box-shadow: 0 0 0 .25rem var(--paper-focus-ring);
+}
+/* Django password validators often render as <ul class="helptext"> */
+.paper-form .helptext,
+.paper-form .helptext li { color: var(--bs-body-color); opacity: .9; }
+/* Make Bootstrap's secondary text a hair darker on “paper” */
+.paper-form { --bs-secondary-color: #4f4d37; }
+
+/* ---------- Board (note grid) ---------- */
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+}
+/* Bulk breakpoints, also included original in comment below if fewer 
+breakpoints are preferred */
+@media (max-width: 1400px) { .board { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 992px)  { .board { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px)  { .board { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .board { grid-template-columns: 1fr; } }
+
+/* Alternative (uncomment to try):
+.board { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+*/
+
+/* ---------- Small sticky cards (on the wall) ---------- */
+.sticky {
+  position: relative;
+  display: block;
+  padding: 16px 16px 18px;
+  min-height: 160px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 18px rgba(0,0,0,.25), 0 1px 0 rgba(255,255,255,.08) inset;
+  transform: rotate(-0.5deg);
+  transition: transform .12s ease, box-shadow .12s ease;
+  overflow: hidden;
+}
+
+/* Hover effects only when hover actually exists (no touchscreens) */
+@media (hover:hover) {
+  .sticky:hover {
+    transform: rotate(0deg) translateY(var(--tilt-hover-translate));
+    box-shadow: 0 14px 24px rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.1) inset;
+  }
+}
+
+/* Paper colors */
+.sticky:nth-child(4n + 1) { background: #fff9c4; } /* pale yellow */
+.sticky:nth-child(4n + 2) { background: #e1f5fe; } /* pale blue */
+.sticky:nth-child(4n + 3) { background: #e8f5e9; } /* pale green */
+.sticky:nth-child(4n + 4) { background: #ffeef7; } /* pale pink */
+
+/* Small random-ish tilts for variety */
+.sticky:nth-child(3n) { transform: rotate(.6deg); }
+.sticky:nth-child(5n) { transform: rotate(-1.1deg); }
+@media (hover:hover) {
+  .sticky:hover:nth-child(3n),
+  .sticky:hover:nth-child(5n) { transform: rotate(0deg) translateY(var(--tilt-hover-translate)); }
+}
+
+/* Pushpin styles */
+.sticky::before,
+.sticky-lg::before {
+  content: "";
+  position: absolute;
+  top: var(--pin-top, 10px);
+  left: 50%;
+  width: var(--pin-size, 12px);
+  height: var(--pin-size, 12px);
+  background: var(--pin);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 2px 6px rgba(0,0,0,.3);
+  z-index: 2;
+}
+/* Upsize the pin on the big note */
+.sticky-lg { --pin-size: 14px; --pin-top: 12px; }
+
+/* Sticky inner text bits */
+.sticky-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 10px 0 6px;
+  line-height: 1.2;
+  word-break: break-word;
+}
+.sticky-content {
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--sticky-body);
+  opacity: .9; /* a touch of marker fade */
+}
+.sticky-meta {
+  position: absolute;
+  bottom: 10px; right: 12px;
+  font-size: .8rem;
+  color: var(--sticky-meta);
+  opacity: .6;
+}
+
+/* Keep readable ink even in dark theme (paper stays light) */
+[data-bs-theme="dark"] .sticky { color: #111; }
+
+/* ---------- Big sticky (note detail page) ---------- */
+.note-canvas {
+  display: flex;
+  justify-content: center;
+  padding-inline: 8px;
+}
+
+.sticky-lg {
+  position: relative;
+  width: min(900px, 100%);
+  padding: 22px 22px 28px;
+  border-radius: var(--radius);
+  min-height: 300px;
+  box-shadow: var(--shadow-card-lg);
+  transform: rotate(var(--tilt));
+  transition: transform .12s ease, box-shadow .12s ease;
+  overflow: hidden;
+}
+@media (hover:hover) {
+  .sticky-lg:hover {
+    transform: rotate(0deg) translateY(var(--tilt-hover-translate));
+    box-shadow: 0 18px 32px rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.12) inset;
+  }
+}
+
+.note-head {
+  margin-top: 14px; /* space under pin */
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.note-title {
+  font-weight: 800;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  margin: 0;
+  word-break: break-word;
+}
+.note-meta {
+  font-size: .9rem;
+  opacity: .7;
+  color: #333;
+  margin-top: 4px;
+}
+.note-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.note-body {
+  margin-top: 10px;
+  font-size: 1.05rem;
+  color: var(--sticky-body);
+  white-space: pre-wrap;
+  word-break: break-word;
+}

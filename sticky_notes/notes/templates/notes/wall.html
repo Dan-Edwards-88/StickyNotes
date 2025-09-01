@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Wall - StickyNotes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 m-0">Your notes</h1>
+</div>
+
+{% if notes %}
+  <div class="board">
+    {% for note in notes %}
+      <a href="{% url 'notes:detail' note_id=note.pk %}" class="sticky">
+        <div class="sticky-title">{{ note.title }}</div>
+        <div class="sticky-content">
+          {{ note.content|truncatechars:240 }}
+        </div>
+        <div class="sticky-meta">
+          {{ note.updated_at|default:note.created_at|date:"M j, Y" }}
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-center py-5">
+    <p class="lead mb-3">No notes yet.</p>
+    <a class="btn btn-primary" href="{% url 'notes:create' %}">Create your first note</a>
+  </div>
+{% endif %}
+{% endblock %}

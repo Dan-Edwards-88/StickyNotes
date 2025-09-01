@@ -1,0 +1,95 @@
+{% extends "base.html" %} {% block title %}Edit: {{ note.title }} -
+StickyNotes{% endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-7">
+    <div class="card paper-form shadow-sm">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h1 class="h4 mb-0">Edit note</h1>
+        </div>
+
+        <!-- Error Messages -->
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+          {% for err in form.non_field_errors %}{{ err }}{% endfor %}
+        </div>
+        {% endif %}
+
+        <form
+          id="edit-form"
+          method="post"
+          action="{% url 'notes:edit' note_id=note.pk %}"
+          novalidate
+        >
+          {% csrf_token %}
+
+          <!-- Title -->
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.title.id_for_label }}"
+              >Title</label
+            >
+            <input
+              type="text"
+              name="{{ form.title.name }}"
+              id="{{ form.title.id_for_label }}"
+              value="{{ form.title.value|default_if_none:'' }}"
+              class="form-control {% if form.title.errors %}is-invalid{% endif %}"
+              maxlength="{{ form.title.field.max_length }}"
+              required
+            />
+            {% if form.title.errors %}
+            <div class="invalid-feedback">
+              {% for err in form.title.errors %}{{ err }}{% endfor %}
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Content -->
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.content.id_for_label }}"
+              >Content</label
+            >
+            <textarea
+              name="{{ form.content.name }}"
+              id="{{ form.content.id_for_label }}"
+              rows="8"
+              class="form-control {% if form.content.errors %}is-invalid{% endif %}"
+              required
+            >
+              {{ form.content.value|default_if_none:'' }}</textarea
+            >
+            {% if form.content.errors %}
+            <div class="invalid-feedback">
+              {% for err in form.content.errors %}{{ err }}{% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </form>
+
+        <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+          <div class="d-flex gap-2">
+            <button type="submit" form="edit-form" class="btn btn-primary">
+              Save changes
+            </button>
+            <a
+              class="btn btn-secondary"
+              href="{% url 'notes:detail' note_id=note.pk %}"
+              >Cancel</a
+            >
+          </div>
+
+          <form
+            method="post"
+            action="{% url 'notes:delete' note_id=note.pk %}"
+            class="ms-auto"
+            onsubmit="return confirm('Delete this note?');"
+          >
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
